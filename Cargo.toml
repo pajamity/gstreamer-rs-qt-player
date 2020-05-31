@@ -1,0 +1,14 @@
+[package]
+name = "qt_quick_cargo"
+version = "0.1.0"
+build = "build.rs"
+links = "qt_quick_cargo"
+
+[dependencies]
+libc = "*"
+gstreamer = "0.15.5"
+
+[build-dependencies]
+
+[dev-dependencies]
+rust_qt_binding_generator = "0.3.5"
