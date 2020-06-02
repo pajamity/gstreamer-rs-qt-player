@@ -7,16 +7,15 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQml/qqml.h>
 
-#include <iostream>
-#include <glib-object.h>
-// #include <gst/gst.h>
+#include <stdio.h>
 
 // exported functions
 extern "C" {
-    int main_cpp(const char* app, void* sink); // the function C++ source exports (and Rust source calls it)
+    int main_cpp(const char* app); // the function C++ source exports (and Rust source calls it)
+    void set_qmlglsink_widget(QQuickItem* widget);// the function Rust source exports (and this source calls it)
 }
 
-int main_cpp(const char* appPath, void* sink)
+int main_cpp(const char* appPath)
 {
     int argc = 1;
     char* argv[1] = { (char*)appPath };
@@ -35,9 +34,8 @@ int main_cpp(const char* appPath, void* sink)
     QQuickWindow *rootObject = static_cast<QQuickWindow *>(engine.rootObjects().first());
     QQuickItem *videoItem = rootObject->findChild<QQuickItem *>("videoItem");
 
-    std::cout << "Address of sink C++ was given by Rust: " << sink << std::endl;
-    g_object_set(sink, "widget", videoItem, NULL);
-    // set_property?
+    printf("C++: Pointer to QQuickItem: %p\n", videoItem);
+    set_qmlglsink_widget(videoItem);
 
     return app.exec();
 }

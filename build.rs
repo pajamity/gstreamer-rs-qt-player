@@ -8,8 +8,10 @@ fn main() {
         .bindings("bindings.json")
         .qrc("qml.qrc")
         .cpp("src/main.cpp")
+        .include_path("/usr/include/glib-2.0") // equivalent to "-I"
+        .include_path("/usr/lib/glib-2.0/include")
         .module(QtModule::Gui)
         .module(QtModule::Qml)
-        .module(QtModule::Quick)
+        .module(QtModule::Quick) // to use QQuickItem, QQuickWindow
         .compile("gstreamer_rs_qt_player");
 }
