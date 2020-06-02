@@ -245,6 +245,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "gstreamer_rs_qt_player"
+version = "0.1.0"
+dependencies = [
+ "glib",
+ "glib-sys",
+ "gobject-sys",
+ "gstreamer",
+ "gstreamer-sys",
+ "libc",
+ "rust_qt_binding_generator",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -416,15 +429,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1502d12e458c49a4c9cbff560d0fe0060c252bc29799ed94ca2ed4bb665a0101"
 dependencies = [
  "unicode-xid",
-]
-
-[[package]]
-name = "qt_quick_cargo"
-version = "0.1.0"
-dependencies = [
- "gstreamer",
- "libc",
- "rust_qt_binding_generator",
 ]
 
 [[package]]

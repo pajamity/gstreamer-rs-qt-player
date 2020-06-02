@@ -1,16 +1,23 @@
 import QtQuick 2.6
 import QtQuick.Window 2.2
 
+import org.freedesktop.gstreamer.GLVideoItem 1.0
+
 Window {
     visible: true
     width: 640
     height: 480
     title: qsTr("Player")
 
-    MainForm {
+    Item {
         anchors.fill: parent
-        mouseArea.onClicked: {
-            console.log(qsTr('Clicked on background. Text: "' + textEdit.text + '"'))
+
+        GstGLVideoItem {
+            id: videoItem
+            objectName: "videoItem"
+            anchors.centerIn: parent
+            width: parent.width
+            height: parent.height
         }
     }
 }

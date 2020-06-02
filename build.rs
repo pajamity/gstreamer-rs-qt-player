@@ -10,5 +10,6 @@ fn main() {
         .cpp("src/main.cpp")
         .module(QtModule::Gui)
         .module(QtModule::Qml)
-        .compile("qt_quick_cargo");
+        .module(QtModule::Quick)
+        .compile("gstreamer_rs_qt_player");
 }
