@@ -1,7 +1,17 @@
 use interface::*;
 
+extern crate gstreamer as gst;
+
 // We need to create `Player` struct and implement `PlayerTrait` trait on it
-// Create struct in main.rs since Qt part and Gstreamer part cannot share same data between separated structs (?)
+// Put Qt-related properties and GStreamer-related properties in the same struct 
+
+// this struct is referred from both of main.rs and interface.rs so is put here
+pub struct Player {
+  pub emit: PlayerEmitter,
+  pub playbin: gst::Element,
+  pub sink: gst::Element,
+}
+
 // struct Player {
 //   emit: PlayerEmitter,
   

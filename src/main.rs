@@ -10,31 +10,44 @@ use glib::translate::{ToGlib, FromGlib};
 
 extern crate gobject_sys;
 
+#[macro_use]
+extern crate lazy_static;
+
+use std::sync::Mutex;
+
 mod implementation;
-pub mod interface {
-  include!(concat!(env!("OUT_DIR"), "/src/interface.rs"));
-}
+use implementation::*;
+// pub mod interface {
+//   // include!(concat!(env!("OUT_DIR"), "/src/interface.rs"));
+//   include!("./interface.rs");
+// }
+
+mod interface;
+use interface::*;
+
+// I couldn't avoid using global state...
+// lazy_static (static Mutex) can't be used as *const usize "cannot be sent between threads safely" according to the compiler
+static mut video_item_ptr: *const usize = 0 as *const usize;
 
 // functions in main.cpp
 extern {
-  fn main_cpp(app: *const ::std::os::raw::c_char, sink: *const gstreamer_sys::GstElement);
-}
-
-// struct PlayerElements {
-//   playbin: gst::Element,
-//   sink: gst::Element,
-// }
-
-struct Player {
-  emit: PlayerEmitter,
-  playbin: gst::Element,
-  sink: gst::Element,
+  fn main_cpp(app: *const ::std::os::raw::c_char) -> *const usize;
+  fn set_widget_to_sink(sink: *const gstreamer_sys::GstElement, video_item: *const usize);
 }
 
 impl PlayerTrait for Player {
   fn new(emit: PlayerEmitter) -> Self {
+    let (sink, playbin) = setup();
+    unsafe {
+      println!("Address of sink Rust gives C++: {:?}", sink.as_ptr());
+      println!("Address of videoItem Rust gives C++: {:?}", video_item_ptr);
+      set_widget_to_sink(sink.as_ptr(), video_item_ptr);
+    }
+
     Self {
       emit,
+      playbin,
+      sink
     }
   }
 
@@ -42,23 +55,13 @@ impl PlayerTrait for Player {
     &mut self.emit
   }
 
-  fn pause(&mut self) -> () {
-
-  }
-
-  fn play(&mut self) -> () {
-
-  }
-}
-
-impl Player {
-  fn play(&self) {
+  fn play(&mut self) {
     self.playbin
       .set_state(gst::State::Playing)
       .expect("could not change the state");
   }
   
-  fn pause(&self) {
+  fn pause(&mut self) {
     self.playbin
       .set_state(gst::State::Paused)
       .expect("could not change the state");
@@ -70,16 +73,15 @@ fn main() {
   gst::init().unwrap();
   let _ = gst::ElementFactory::make("qmlglsink", Some("qmlglsink"));
 
-  // setup sink + playbin
-  let player = setup();
-
   // Call Qt via FFI
   use std::ffi::CString;
   let app_name = ::std::env::args().next().unwrap();
   let app_name = CString::new(app_name).unwrap();
-  println!("Address of sink Rust gives C++: {:?}", player.sink.as_ptr());
+  
+  let mut video_item;
   unsafe {
-    main_cpp(app_name.as_ptr(), player.sink.as_ptr());
+    video_item = main_cpp(app_name.as_ptr());
+    video_item_ptr = video_item;
   }
 }
 

@@ -1,5 +1,6 @@
-import QtQuick 2.6
-import QtQuick.Window 2.2
+import QtQuick 2.14
+import QtQuick.Window 2.14
+import QtQuick.Controls 2.14
 
 import org.freedesktop.gstreamer.GLVideoItem 1.0
 
@@ -21,7 +22,7 @@ Window {
         }
     }
 
-    Item {
+    Button {
         id: playpause
         objectName: "playpause"
         anchors.centerIn: parent
@@ -30,7 +31,6 @@ Window {
         text: "Play"
 
         property bool playing: false
-        signal playStateChanged()
 
         function play() {
             playpause.playing = true
@@ -41,12 +41,12 @@ Window {
             playpause.playing = false
             playpause.text = "Play"
         }
-
+        
         onClicked: {
-            if (playing) [
-                pause()
-            ] else {
-                play()
+            if (playing) {
+                playpause.pause()
+            } else {
+                playpause.play()
             }
         }
     }

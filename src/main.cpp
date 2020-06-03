@@ -13,11 +13,11 @@
 
 // exported functions
 extern "C" {
-    int main_cpp(const char* app, void* sink); // the function C++ source exports (and Rust source calls it)
+    QQuickItem *main_cpp(const char* app); // the function C++ source exports (and Rust source calls it)
+    void set_widget_to_sink(void *sink, QQuickItem *videoItem);
 }
 
-int main_cpp(const char* appPath, void* sink)
-{
+QQuickItem *main_cpp(const char* appPath) {
     int argc = 1;
     char* argv[1] = { (char*)appPath };
     QGuiApplication app(argc, argv);
@@ -30,14 +30,18 @@ int main_cpp(const char* appPath, void* sink)
         engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     }
     if (engine.rootObjects().isEmpty())
-        return -1;
+        return nullptr;
 
     QQuickWindow *rootObject = static_cast<QQuickWindow *>(engine.rootObjects().first());
     QQuickItem *videoItem = rootObject->findChild<QQuickItem *>("videoItem");
+    
+    app.exec();
 
+    return videoItem;
+}
+
+void set_widget_to_sink(void *sink, QQuickItem *videoItem) {
     std::cout << "Address of sink C++ was given by Rust: " << sink << std::endl;
+    std::cout << "Address of videoItem C++ was given by Rust: " << videoItem << std::endl;
     g_object_set(sink, "widget", videoItem, NULL);
-    // set_property?
-
-    return app.exec();
 }
