@@ -16,6 +16,10 @@
         "pause": {
           "return": "void",
           "mut": true
+        },
+        "onVideoItemLoaded": {
+          "return": "void",
+          "mut": false
         }
       }
     }

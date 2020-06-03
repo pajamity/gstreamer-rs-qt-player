@@ -10,9 +10,6 @@ use glib::translate::{ToGlib, FromGlib};
 
 extern crate gobject_sys;
 
-#[macro_use]
-extern crate lazy_static;
-
 use std::sync::Mutex;
 
 mod implementation;
@@ -27,7 +24,7 @@ use interface::*;
 
 // I couldn't avoid using global state...
 // lazy_static (static Mutex) can't be used as *const usize "cannot be sent between threads safely" according to the compiler
-static mut video_item_ptr: *const usize = 0 as *const usize;
+static mut VIDEO_ITEM: *const usize = 0 as *const usize;
 
 // functions in main.cpp
 extern {
@@ -40,8 +37,8 @@ impl PlayerTrait for Player {
     let (sink, playbin) = setup();
     unsafe {
       println!("Address of sink Rust gives C++: {:?}", sink.as_ptr());
-      println!("Address of videoItem Rust gives C++: {:?}", video_item_ptr);
-      set_widget_to_sink(sink.as_ptr(), video_item_ptr);
+      println!("Address of videoItem Rust gives C++: {:?}", VIDEO_ITEM);
+      set_widget_to_sink(sink.as_ptr(), VIDEO_ITEM);
     }
 
     Self {
@@ -56,15 +53,24 @@ impl PlayerTrait for Player {
   }
 
   fn play(&mut self) {
+    println!("Play");
     self.playbin
       .set_state(gst::State::Playing)
       .expect("could not change the state");
   }
   
   fn pause(&mut self) {
+    println!("Pause");
     self.playbin
       .set_state(gst::State::Paused)
       .expect("could not change the state");
+  }
+
+  fn on_video_item_loaded(&self) {
+    println!("GstGLVideoItem is loaded");
+    unsafe {
+      set_widget_to_sink(self.sink.as_ptr(), VIDEO_ITEM);
+    }
   }
 }
 
@@ -78,10 +84,8 @@ fn main() {
   let app_name = ::std::env::args().next().unwrap();
   let app_name = CString::new(app_name).unwrap();
   
-  let mut video_item;
   unsafe {
-    video_item = main_cpp(app_name.as_ptr());
-    video_item_ptr = video_item;
+    main_cpp(app_name.as_ptr());
   }
 }
 
@@ -99,4 +103,10 @@ fn setup() -> (gst::Element, gst::Element) {
     .unwrap();
 
   (sink, playbin)
+}
+
+#[no_mangle]
+pub unsafe fn set_video_item_pointer(video_item: *const usize) {
+  VIDEO_ITEM = video_item;
+  println!("Pointer for videoItem: {:?}", video_item);
 }

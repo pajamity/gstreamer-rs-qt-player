@@ -253,7 +253,6 @@ dependencies = [
  "gobject-sys",
  "gstreamer",
  "gstreamer-sys",
- "lazy_static",
  "libc",
  "rust_qt_binding_generator",
 ]

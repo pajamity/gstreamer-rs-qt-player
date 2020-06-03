@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
+import RustCode 1.0
 
 import org.freedesktop.gstreamer.GLVideoItem 1.0
 
@@ -9,6 +10,10 @@ Window {
     width: 640
     height: 480
     title: qsTr("Player")
+
+    Player {
+        id: player
+    }
 
     Item {
         anchors.fill: parent
@@ -35,18 +40,20 @@ Window {
         function play() {
             playpause.playing = true
             playpause.text = "Pause"
+            player.play()
         }
 
         function pause() {
             playpause.playing = false
             playpause.text = "Play"
+            player.pause()
         }
         
         onClicked: {
             if (playing) {
-                playpause.pause()
+                pause()
             } else {
-                playpause.play()
+                play()
             }
         }
     }

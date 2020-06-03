@@ -19,6 +19,7 @@ private:
 public:
     explicit Player(QObject *parent = nullptr);
     ~Player();
+    Q_INVOKABLE void onVideoItemLoaded() const;
     Q_INVOKABLE void pause();
     Q_INVOKABLE void play();
 Q_SIGNALS:
