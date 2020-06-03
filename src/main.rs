@@ -20,9 +20,49 @@ extern {
   fn main_cpp(app: *const ::std::os::raw::c_char, sink: *const gstreamer_sys::GstElement);
 }
 
+// struct PlayerElements {
+//   playbin: gst::Element,
+//   sink: gst::Element,
+// }
+
 struct Player {
+  emit: PlayerEmitter,
   playbin: gst::Element,
   sink: gst::Element,
+}
+
+impl PlayerTrait for Player {
+  fn new(emit: PlayerEmitter) -> Self {
+    Self {
+      emit,
+    }
+  }
+
+  fn emit(&mut self) -> &mut PlayerEmitter {
+    &mut self.emit
+  }
+
+  fn pause(&mut self) -> () {
+
+  }
+
+  fn play(&mut self) -> () {
+
+  }
+}
+
+impl Player {
+  fn play(&self) {
+    self.playbin
+      .set_state(gst::State::Playing)
+      .expect("could not change the state");
+  }
+  
+  fn pause(&self) {
+    self.playbin
+      .set_state(gst::State::Paused)
+      .expect("could not change the state");
+  }
 }
 
 fn main() {
@@ -43,11 +83,11 @@ fn main() {
   }
 }
 
-fn setup() -> Player {
+fn setup() -> (gst::Element, gst::Element) {
   let playbin = gst::ElementFactory::make("playbin", None).unwrap();
   playbin.set_property("uri", &glib::Value::from("file:///usr/share/big-buck-bunny_trailer.webm")).unwrap();
   let sink = gst::ElementFactory::make("qmlglsink", None).unwrap();
-  let sinkbin = gst::ElementFactory::make("glsinkbin", None).unwrap();
+  let sinkbin = gst::ElementFactory::make("glsinkbin", None).unwrap();  
 
   sinkbin
     .set_property("sink", &sink.to_value())
@@ -56,14 +96,5 @@ fn setup() -> Player {
     .set_property("video-sink", &sinkbin.to_value())
     .unwrap();
 
-  Player {
-    sink,
-    playbin,
-  }
-}
-
-fn play(player: &Player) {
-  player.playbin
-    .set_state(gst::State::Playing)
-    .expect("could not change the state");
+  (sink, playbin)
 }

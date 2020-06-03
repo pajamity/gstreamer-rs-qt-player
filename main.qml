@@ -20,4 +20,34 @@ Window {
             height: parent.height
         }
     }
+
+    Item {
+        id: playpause
+        objectName: "playpause"
+        anchors.centerIn: parent
+        width: 30
+        height: 30
+        text: "Play"
+
+        property bool playing: false
+        signal playStateChanged()
+
+        function play() {
+            playpause.playing = true
+            playpause.text = "Pause"
+        }
+
+        function pause() {
+            playpause.playing = false
+            playpause.text = "Play"
+        }
+
+        onClicked: {
+            if (playing) [
+                pause()
+            ] else {
+                play()
+            }
+        }
+    }
 }

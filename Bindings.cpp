@@ -3,3 +3,37 @@
 
 namespace {
 }
+extern "C" {
+    Player::Private* player_new(Player*);
+    void player_free(Player::Private*);
+    void player_pause(Player::Private*);
+    void player_play(Player::Private*);
+};
+
+Player::Player(bool /*owned*/, QObject *parent):
+    QObject(parent),
+    m_d(nullptr),
+    m_ownsPrivate(false)
+{
+}
+
+Player::Player(QObject *parent):
+    QObject(parent),
+    m_d(player_new(this)),
+    m_ownsPrivate(true)
+{
+}
+
+Player::~Player() {
+    if (m_ownsPrivate) {
+        player_free(m_d);
+    }
+}
+void Player::pause()
+{
+    return player_pause(m_d);
+}
+void Player::play()
+{
+    return player_play(m_d);
+}

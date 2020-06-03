@@ -21,7 +21,7 @@ int main_cpp(const char* appPath, void* sink)
     int argc = 1;
     char* argv[1] = { (char*)appPath };
     QGuiApplication app(argc, argv);
-    // qmlRegisterType<Simple>("RustCode", 1, 0, "Simple");
+    qmlRegisterType<Player>("RustCode", 1, 0, "Player");
 
     QQmlApplicationEngine engine;
     if (QFile("main.qml").exists()) {
