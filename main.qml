@@ -30,8 +30,8 @@ Window {
     Button {
         id: playpause
         objectName: "playpause"
-        anchors.centerIn: parent
-        width: 30
+        anchors.bottom: parent.bottom
+        width: 80
         height: 30
         text: "Play"
 

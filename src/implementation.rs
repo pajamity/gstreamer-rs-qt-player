@@ -2,6 +2,8 @@ use interface::*;
 
 extern crate gstreamer as gst;
 
+use std::sync::{Arc};
+
 // We need to create `Player` struct and implement `PlayerTrait` trait on it
 // Put Qt-related properties and GStreamer-related properties in the same struct 
 
@@ -9,7 +11,7 @@ extern crate gstreamer as gst;
 pub struct Player {
   pub emit: PlayerEmitter,
   pub playbin: gst::Element,
-  pub sink: gst::Element,
+  pub sink: Arc<gst::Element>,
 }
 
 // struct Player {

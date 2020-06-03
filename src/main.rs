@@ -10,7 +10,7 @@ use glib::translate::{ToGlib, FromGlib};
 
 extern crate gobject_sys;
 
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 mod implementation;
 use implementation::*;
@@ -35,17 +35,18 @@ extern {
 impl PlayerTrait for Player {
   fn new(emit: PlayerEmitter) -> Self {
     let (sink, playbin) = setup();
-    unsafe {
-      println!("Address of sink Rust gives C++: {:?}", sink.as_ptr());
-      println!("Address of videoItem Rust gives C++: {:?}", VIDEO_ITEM);
-      set_widget_to_sink(sink.as_ptr(), VIDEO_ITEM);
-    }
 
-    Self {
+    let s = Self {
       emit,
       playbin,
-      sink
-    }
+      sink: Arc::new(sink)
+    };
+    
+    // This constructor is called from `engine.load()` in main_cpp(). But we are going to obtain the address for videoItem later in main_cpp() (set_video_item_pointer())
+    // so we wait until the pointer of video_item is passed
+    s.wait_for_pointer();
+
+    s
   }
 
   fn emit(&mut self) -> &mut PlayerEmitter {
@@ -71,6 +72,28 @@ impl PlayerTrait for Player {
     unsafe {
       set_widget_to_sink(self.sink.as_ptr(), VIDEO_ITEM);
     }
+  }
+}
+
+impl Player {
+  fn wait_for_pointer(&self) {
+    use std::thread;
+    use std::time::{Duration, Instant};
+
+    let sink = self.sink.clone();
+    thread::spawn(move || {
+      loop {
+        unsafe {
+          if VIDEO_ITEM != 0 as *const usize {
+            println!("Address of sink Rust gives C++: {:?}", (*sink).as_ptr());
+            println!("Address of videoItem Rust gives C++: {:?}", VIDEO_ITEM);
+            set_widget_to_sink((*sink).as_ptr(), VIDEO_ITEM);  
+            break
+          }
+        }
+        thread::sleep(Duration::from_millis(50));
+      }
+    });
   }
 }
 

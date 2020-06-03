@@ -21,6 +21,8 @@ extern "C" {
     void set_video_item_pointer(QQuickItem *videoItem);
 }
 
+// QQuickItem *videoItem;
+
 int main_cpp(const char* appPath) {
     int argc = 1;
     char* argv[1] = { (char*)appPath };
@@ -39,8 +41,7 @@ int main_cpp(const char* appPath) {
     QQuickWindow *rootObject = static_cast<QQuickWindow *>(engine.rootObjects().first());
     QQuickItem *videoItem = rootObject->findChild<QQuickItem *>("videoItem");
     set_video_item_pointer(videoItem);
-    std::cout << "set VideoItem addr! " << videoItem << std::endl;
-
+    std::cout << "Passed the address of videoItem to Rust: " << videoItem << std::endl;
     
     return app.exec(); // This starts an event loop so we won't return till that loop ends.
 }
