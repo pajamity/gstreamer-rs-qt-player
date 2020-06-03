@@ -66,13 +66,6 @@ impl PlayerTrait for Player {
       .set_state(gst::State::Paused)
       .expect("could not change the state");
   }
-
-  fn on_video_item_loaded(&self) {
-    println!("GstGLVideoItem is loaded");
-    unsafe {
-      set_widget_to_sink(self.sink.as_ptr(), VIDEO_ITEM);
-    }
-  }
 }
 
 impl Player {

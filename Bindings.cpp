@@ -6,7 +6,6 @@ namespace {
 extern "C" {
     Player::Private* player_new(Player*);
     void player_free(Player::Private*);
-    void player_on_video_item_loaded(const Player::Private*);
     void player_pause(Player::Private*);
     void player_play(Player::Private*);
 };
@@ -29,10 +28,6 @@ Player::~Player() {
     if (m_ownsPrivate) {
         player_free(m_d);
     }
-}
-void Player::onVideoItemLoaded() const
-{
-    return player_on_video_item_loaded(m_d);
 }
 void Player::pause()
 {

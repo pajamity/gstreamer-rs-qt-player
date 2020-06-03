@@ -38,7 +38,6 @@ impl PlayerEmitter {
 pub trait PlayerTrait {
     fn new(emit: PlayerEmitter) -> Self;
     fn emit(&mut self) -> &mut PlayerEmitter;
-    fn on_video_item_loaded(&self) -> ();
     fn pause(&mut self) -> ();
     fn play(&mut self) -> ();
 }
@@ -57,12 +56,6 @@ pub extern "C" fn player_new(
 #[no_mangle]
 pub unsafe extern "C" fn player_free(ptr: *mut Player) {
     Box::from_raw(ptr).emit().clear();
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn player_on_video_item_loaded(ptr: *const Player) {
-    let o = &*ptr;
-    o.on_video_item_loaded()
 }
 
 #[no_mangle]
