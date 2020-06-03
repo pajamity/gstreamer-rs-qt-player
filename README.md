@@ -1,13 +1,16 @@
-Qt Quick template project with Rust bindings
+# Rust + Qt + GStreamer example
 
-This is a template project for writing a Qt Quick GUI on top of Rust code.
+Simple video player made on top of GStreamer + Qt + Rust with the help of [gstreamer-rs]([gstreamer-rs](https://github.com/sdroege/gstreamer-rs)), [rust-qt-bindings-generator](https://github.com/KDE/rust-qt-binding-generator). I also referrerd to [QtQuickPlayer](https://github.com/ivasilev/QtQuickPlayer) and [Quemail](https://gitlab.com/rhn/quemail) to figure out how they manage to integrate Qt+GStreamer and Qt+Rust, respectively.
 
-`bindings.json` defines the interface between the Qt and Rust code.
+This is my learning project. Feel free to make PRs and issues if you have better ideas of implementation.
 
-Build instructions are written in `build.rs`.
+## Requirements
 
-Build this code with
+- Qt (I've designated 2.14 in `main.qml` as it was the version installed on my PC but it should work in older versions)
+- Rust
+- GStreamer
+- some Cargo crates
 
-```bash
-cargo build
-```
+## Build & Run
+
+``$ cargo build`` or ``$ cargo run``. No need to install `rust-qt-binding-generator`, this repo also comes with those bindings (`Bindings.*`).
